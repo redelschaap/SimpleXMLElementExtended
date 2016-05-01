@@ -6,7 +6,6 @@
 	 * A simple extended version of SimpleXMLElement that adds CDATA whenever necessary
 	 *
 	 * @author  Ronald Edelschaap <rlwedelschaap@gmail.com> <first autohor>
-	 * @updated 01-05-2016
 	 * @license http://www.gnu.org/licenses/gpl-2.0 GPL v2.0
 	 * @version 1.0
 	 */
