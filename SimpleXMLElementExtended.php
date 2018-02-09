@@ -5,9 +5,10 @@
 	 *
 	 * A simple extended version of SimpleXMLElement that adds CDATA whenever necessary
 	 *
-	 * @author  Ronald Edelschaap <rlwedelschaap@gmail.com> <first autohor>
+	 * @author  Ronald Edelschaap <rlwedelschaap@gmail.com> <first author>
+	 * @updated 01-05-2016
 	 * @license http://www.gnu.org/licenses/gpl-2.0 GPL v2.0
-	 * @version 1.0
+	 * @version 1.1
 	 */
 	class SimpleXMLElementExtended extends SimpleXMLElement {
 
@@ -17,16 +18,17 @@
 		 * @return SimpleXMLElement|SimpleXMLElementExtended
 		 */
 		public function addChild( $name, $value = null, $namespace = null ) {
-			$_value = self::replaceHTMLSpecialChars( (string) $value, true );
+            $_value = self::filterUnicodeCharacters( (string) $value );
+            $_value = self::replaceHTMLSpecialChars( $_value, true );
 
-			if ( $_value !== '' && ( strpos( $_value, '<' ) !== false || strpos( $_value, '>' ) !== false || strpos( $_value, '&' ) !== false ) ) {
-				$child = $this->addChild( $name, null, $namespace );
-				$child->addCData( $value );
+            if ( $_value !== '' && ( strpos( $_value, '<' ) !== false || strpos( $_value, '>' ) !== false || strpos( $_value, '&' ) !== false || strpos( $_value, '"' ) !== false ) ) {
+                $child = $this->addChild( $name, null, $namespace );
+                $child->addCData( $value );
 
-				return $child;
-			}
+                return $child;
+            }
 
-			return parent::addChild( $name, $value, $namespace );
+            return parent::addChild( $name, $value, $namespace );
 		}
 
 		/**
@@ -38,6 +40,15 @@
 			$node  = dom_import_simplexml( $this );
 			$owner = $node->ownerDocument;
 			$node->appendChild( $owner->createCDATASection( $value ) );
+		}
+
+		/**
+		 * @param string $string
+		 *
+		 * @return string
+		 */
+		private static function filterUnicodeCharacters( $string ) {
+			return preg_replace( '/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u', ' ', $string );
 		}
 
 		/**
@@ -191,7 +202,7 @@
 
 			if ( is_array( $html ) ) {
 				foreach ( $html as &$data_val ) {
-					$data_val = str_replace_html_special_chars( $data_val, $reversed );
+					$data_val = self::replaceHTMLSpecialChars( $data_val, $reversed );
 
 					unset( $data_val );
 				}
