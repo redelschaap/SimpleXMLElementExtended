@@ -15,7 +15,7 @@ $child->addChild( 'child3', 'A string with <a href="/test?p=1&q=e">HTML elements
 		->addAttribute( 'attribute', 'value' );
 
 $subChild = $child->addChild( 'child4' );
-$subChild->addChild( 'child4_1, 'value' );
+$subChild->addChild( 'child4_1', 'value' );
 
 print $xml->asXML();
 ```
